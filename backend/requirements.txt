@@ -5,3 +5,4 @@ openai==2.21.0
 python-dotenv==1.2.1
 websockets==16.0
 pgvector==0.4.2
+numpy==2.2.3

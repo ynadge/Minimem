@@ -43,10 +43,19 @@ async def lifespan(app: FastAPI):
     if not database_url:
         raise RuntimeError("DATABASE_URL is not set")
 
+    # Railway injects postgres:// — asyncpg requires postgresql://
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+    # Railway requires SSL; local Postgres typically does not
+    is_local = "localhost" in database_url or "127.0.0.1" in database_url
+    ssl_mode = None if is_local else "require"
+
     async def _init_connection(conn):
         await register_vector(conn)
 
-    app.state.pool = await asyncpg.create_pool(database_url, init=_init_connection)
+    app.state.pool = await asyncpg.create_pool(
+        database_url, init=_init_connection, ssl=ssl_mode
+    )
     print("Database connection pool created")
     yield
     await app.state.pool.close()
@@ -55,10 +64,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="MiniMem API", lifespan=lifespan)
 
-# CORS for Next.js frontend
+# CORS — env-driven so the Vercel production URL can be added in Railway
+cors_origins_raw = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001")
+cors_origins = [origin.strip() for origin in cors_origins_raw.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

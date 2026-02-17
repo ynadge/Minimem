@@ -51,11 +51,11 @@ INDEX_SQL = [
 ]
 
 
-async def ensure_database_exists(database_url: str):
+async def ensure_database_exists(database_url: str, ssl_mode):
     """Create the 'minimem' database if it doesn't already exist."""
     # Connect to the default 'postgres' database to run CREATE DATABASE
     admin_url = database_url.rsplit("/", 1)[0] + "/postgres"
-    conn = await asyncpg.connect(admin_url)
+    conn = await asyncpg.connect(admin_url, ssl=ssl_mode)
     try:
         exists = await conn.fetchval(
             "SELECT 1 FROM pg_database WHERE datname = 'minimem'"
@@ -75,12 +75,20 @@ async def init_database():
         print("ERROR: DATABASE_URL not set in .env")
         return
 
-    # Step 1: Ensure the database exists
-    await ensure_database_exists(database_url)
+    # Railway injects postgres:// — asyncpg requires postgresql://
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-    # Step 2: Connect to minimem and create schema
-    print("Connecting to minimem database...")
-    conn = await asyncpg.connect(database_url)
+    # Railway requires SSL; local Postgres typically does not
+    is_local = "localhost" in database_url or "127.0.0.1" in database_url
+    ssl_mode = None if is_local else "require"
+
+    # Only try to create the database locally — Railway provisions it automatically
+    if is_local:
+        await ensure_database_exists(database_url, ssl_mode)
+
+    # Connect and create schema
+    print("Connecting to database...")
+    conn = await asyncpg.connect(database_url, ssl=ssl_mode)
 
     try:
         print("Creating tables...")
