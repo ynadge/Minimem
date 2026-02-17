@@ -20,7 +20,7 @@ This is what Sentra is building against. MiniMem is my attempt to prototype one 
 
 ## The Demo
 
-MiniMem puts you inside a "Slack" group chat at **PreCrimeAI** — a (fictional, satirical) startup building an AI camera app that classifies strangers as GOOD or BAD using computer vision and vibes. They recently pivoted hard to enterprise B2B. Their engineer Alex did not get the memo.
+MiniMem puts you inside a "Slack" group chat at **PreCrimeAI**, which is a (fictional, satirical) startup building an AI camera app that classifies strangers as GOOD or BAD using computer vision and vibes. They recently pivoted hard to enterprise B2B. Their engineer Alex did not get the memo.
 
 **The game:**
 1. Alex opens the conversation and asks what you should work on
