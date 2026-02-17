@@ -26,6 +26,9 @@ env/
 .DS_Store
 Thumbs.db
 
+# Build tickets
+ticket_*.md
+
 # Node (frontend - for later)
 node_modules/
 .next/
