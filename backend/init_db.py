@@ -78,9 +78,8 @@ async def init_database():
     # Railway injects postgres:// — asyncpg requires postgresql://
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-    # Railway requires SSL; local Postgres typically does not
     is_local = "localhost" in database_url or "127.0.0.1" in database_url
-    ssl_mode = None if is_local else "require"
+    ssl_mode = "require" if os.getenv("DB_SSL") == "true" else None
 
     # Only try to create the database locally — Railway provisions it automatically
     if is_local:
