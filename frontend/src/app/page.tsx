@@ -145,15 +145,17 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
-      {/* Top label */}
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-10">
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm px-4 py-1.5 rounded-full font-medium tracking-wide">
-          🧠 MiniMem — Organizational Memory Demo
-        </div>
-      </div>
-
-      <div className="w-full max-w-4xl">
+    <main
+      className="h-screen w-screen overflow-hidden flex items-center justify-center p-4"
+      style={{
+        background: '#1a1a2e',
+        backgroundImage: `
+          radial-gradient(ellipse at 20% 50%, rgba(97, 31, 105, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 20%, rgba(74, 21, 75, 0.1) 0%, transparent 50%)
+        `,
+      }}
+    >
+      <div className="w-full h-full">
         <LaptopFrame>
           <div className="flex h-full" style={{ fontFamily: "'Lato', sans-serif" }}>
             <SlackSidebar />
