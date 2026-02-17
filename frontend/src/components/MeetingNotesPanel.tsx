@@ -18,7 +18,7 @@ const AGENDA_NOTES = {
 }
 
 export function MeetingNotesPanel() {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
 
   return (
     <div className="mx-4 mb-3 rounded-lg border border-[#e8e8e8] overflow-hidden text-[#1d1c1d]">
