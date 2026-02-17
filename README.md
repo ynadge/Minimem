@@ -177,26 +177,26 @@ minimem/
 
 This demo deliberately scopes down to one core interaction. In a production system:
 
-**Broader ingestion** — real Slack threads, Notion docs, email chains, Jira tickets. The pipeline is the same (chunk → embed → store) but the surface area of organizational memory is much larger.
+**Broader ingestion**: Real Slack threads, Notion docs, email chains, Jira tickets. The pipeline is the same but the surface area of organizational memory is much larger.
 
-**Smarter chunking** — right now entire meeting transcripts are embedded as single vectors. In practice you'd chunk by speaker turn or topic, embed each chunk separately, and retrieve at chunk granularity. Better recall, more precise citations.
+**Smarter chunking**: Right now entire meeting transcripts are embedded as single vectors. In practice you'd chunk by speaker turn or topic, embed each chunk separately, and retrieve at chunk granularity for better recal and precise citations.
 
-**Longitudinal context** — decisions decay and get superseded. The system should understand that a January decision can be overridden by a March decision, and weight recency accordingly. Right now it just finds the most semantically similar decision, not the most *current* one.
+**Longitudinal context**: Decisions decay and get superseded. The system should understand that a January decision can be overridden by a March decision, and weight recency accordingly. Right now it just finds the most semantically similar decision, not the most *current* one.
 
-**Multi-tenant isolation** — the schema is ready for it (adding `org_id` foreign keys), but the API layer doesn't enforce it yet. Real product needs row-level security.
+**Multi-tenant isolation**: The schema is ready for it (adding `org_id` foreign keys), but the API layer doesn't enforce it yet. Real product needs row-level security.
 
-**Proactive surfacing** — right now MiniMem only fires reactively (when someone says something wrong). The more interesting product moment is proactive: "Based on last week's all-hands, here's context you might want before this meeting."
+**Proactive surfacing**: Right now MiniMem only fires reactively (when someone says something wrong). The more interesting product moment is proactive: "Based on last week's all-hands, here's context you might want before this meeting."
 
 ---
 
 ## Why I Built This
 
-I came across Sentra after your funding announcement and the problem immediately resonated. I've watched fast-growing teams lose their own context — decisions made in week 3 that contradict decisions from week 1, engineers building things leadership explicitly paused, new hires operating on stale mental models of what the company is doing.
+I came across Sentra after your seed funding announcement. I love staying in the loop when it comes to latest startups, especially from big accelerators like a16z. This led me down a rabbit hole where I really wanted to understand this intriguing concept of an organizational brain. I have felt the slipping of context or misalignment creep into the four person team I currently am on, so it feels only natural that something like Sentra would have very significant and measurable returns in larger teams, and would become irreplaceable once embeded in everyday communication. The manifesto on the Sentra site makes complete sense when it says that the "moat deepens with time".
 
-MiniMem is my attempt to make that problem tangible and interactive. It's also an honest signal of what I'd bring to the role: I can scope a problem, design a system, and ship something end-to-end that demonstrates the core value prop.
+Sentra wants people who take initiative, work indepently, and can move fast. So, I not only saw MiniMem as a signal that I can bring all the technical requirements for the new grad SWE role, but that I also have the interest in simplifying complex workflows and data into interfaces that feel intuitive.
 
 I'd love to talk about what you're building.
 
 ---
 
-*Built by [Your Name] · [your@email.com] · [linkedin.com/in/yourprofile]*
+*Built by Yash Nadge · yash.nadge@gmail.com · [Linkedin](https://www.linkedin.com/in/yash-nadge/)*
