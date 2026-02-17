@@ -2,9 +2,9 @@
 
 > *What happens when a company loses itself?*
 
-A demo exploring organizational memory — built to show how AI can prevent the misalignment that quietly kills startups as they scale.
+A demo exploring organizational memory that is built to show how AI can prevent the misalignment that quietly kills startups as they scale.
 
-**[→ Try the live demo](https://minimem-flame.vercel.app)**
+**[Try the live demo](https://minimem-flame.vercel.app)**
 
 ---
 
@@ -12,7 +12,7 @@ A demo exploring organizational memory — built to show how AI can prevent the 
 
 Growing startups make dozens of decisions every week. Strategic pivots, priority calls, things that are explicitly off the table. Those decisions live in meeting notes, Slack threads, and the heads of whoever was in the room.
 
-Two weeks later, an engineer who missed the all-hands is suggesting exactly the work leadership decided to pause. Not out of malice — out of information decay. The company is misaligned with itself.
+Two weeks later, an engineer who missed the all-hands is suggesting exactly the work leadership decided to pause. The company is misaligned with itself.
 
 This is what Sentra is building against. MiniMem is my attempt to prototype one slice of that problem: **what if an AI teammate could catch misalignment the moment it enters a conversation?**
 
@@ -20,13 +20,13 @@ This is what Sentra is building against. MiniMem is my attempt to prototype one 
 
 ## The Demo
 
-MiniMem puts you inside a Slack-like group chat at **PreCrime.ai** — a (fictional, satirical) startup building an AI camera app that classifies strangers as GOOD 🟢 or BAD 🔴 using computer vision and vibes. They recently pivoted hard to enterprise B2B. Their engineer Alex did not get the memo.
+MiniMem puts you inside a "Slack" group chat at **PreCrimeAI** — a (fictional, satirical) startup building an AI camera app that classifies strangers as GOOD or BAD using computer vision and vibes. They recently pivoted hard to enterprise B2B. Their engineer Alex did not get the memo.
 
 **The game:**
 1. Alex opens the conversation and asks what you should work on
 2. The pinned meeting notes show you exactly what leadership decided
-3. Try suggesting something off-agenda — watch MiniMem catch it in real time
-4. Course-correct — watch MiniMem confirm you're aligned
+3. Try suggesting something off-agenda AND watch MiniMem catch it in real time
+4. Course-correct: Watch MiniMem confirm you're aligned
 
 The point isn't the game. The point is experiencing what organizational memory actually *feels* like when it works.
 
@@ -36,18 +36,18 @@ The point isn't the game. The point is experiencing what organizational memory a
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Next.js Frontend                      │
-│         Slack-like UI · TypeScript · Tailwind            │
+│                    Next.js Frontend                     │
+│         Slack-like UI · TypeScript · Tailwind           │
 └────────────────────────┬────────────────────────────────┘
                          │ HTTP (parallel requests)
           ┌──────────────┴──────────────┐
           ▼                             ▼
 ┌─────────────────┐          ┌──────────────────────┐
-│   /api/chat     │          │    /api/analyze       │
-│                 │          │                       │
-│  Alex (teammate │          │  MiniMem (guardian    │
-│  AI) responds   │          │  AI) checks alignment │
-└────────┬────────┘          └──────────┬────────────┘
+│   /api/chat     │          │    /api/analyze      │
+│                 │          │                      │
+│  Alex (teammate │          │  MiniMem (guardian   │
+│  AI) responds   │          │  AI) checks alignment│
+└────────┬────────┘          └──────────┬───────────┘
          │                              │
          │              ┌───────────────┘
          │              ▼
@@ -62,23 +62,23 @@ The point isn't the game. The point is experiencing what organizational memory a
          └───────────────┼──────────────┐
                          ▼              ▼
               ┌─────────────────────────────────┐
-              │    PostgreSQL + pgvector         │
-              │                                  │
-              │  meetings  (transcript, embedding)│
-              │  decisions (content, embedding)   │
-              │  participants                     │
+              │    PostgreSQL + pgvector        │
+              │                                 │
+              │  meetings (transcript,embedding)│
+              │  decisions (content, embedding) │
+              │  participants                   │
               └─────────────────────────────────┘
 ```
 
-### Two AI instances, one purpose
+### Two AI instances
 
-The most interesting architectural decision: two separate LLM calls fire in parallel on every user message.
+The most interesting architectural decision was that two separate LLM calls fire in parallel on every user message.
 
-**Alex (the teammate)** runs with a system prompt that makes him enthusiastic but context-blind. He doesn't know about recent decisions. He'll happily agree to build the consumer leaderboard, work on the mobile app, or anything else that's been explicitly frozen. Temperature 0.8 — he has personality.
+**Alex (the teammate)** runs with a system prompt that makes him enthusiastic but context-blind. He doesn't know about recent decisions. He'll happily agree to build the consumer leaderboard, work on the mobile app, or anything else that's been explicitly frozen. 
 
-**MiniMem (the guardian)** never sees Alex's response. It independently analyzes the conversation against the decision database using vector similarity search. Temperature 0 — it needs to be deterministic.
+**MiniMem (the guardian)** never sees Alex's response. It independently analyzes the conversation against the decision database using vector similarity search.
 
-The two AIs are completely unaware of each other. MiniMem isn't reacting to Alex — it's reacting to the conversation's *direction*. This is the right design: in production, you'd want the memory layer to be orthogonal to the communication layer.
+The two AIs are completely unaware of each other. MiniMem is reacting to the conversation's *direction*. This is the right design: in production, you'd want the memory layer to be orthogonal to the communication layer.
 
 ### RAG implementation
 
@@ -90,18 +90,18 @@ On each message, MiniMem:
 3. If the best match exceeds a 0.75 similarity threshold, passes the conversation + top matches to `gpt-4o-mini` for alignment judgment
 4. Returns structured JSON: `{ aligned, issue, relevant_decision, meeting_title, severity }`
 
-The 0.75 threshold is doing real work here. Below it, there's not enough semantic overlap to make a confident claim — better to stay quiet than false-positive. In the test data, genuine misalignments score 0.80+.
+The 0.75 threshold is doing real work here. Below it, there's not enough semantic overlap to make a confident claim and its better to stay quiet than act on a false-positive. In the test data, genuine misalignments score 0.80+.
 
 ### Why HNSW over IVFFlat
 
-IVFFlat requires a minimum number of rows before you can create the index — annoying during development when you're re-seeding constantly. HNSW works on empty tables and has better recall at the cost of slightly higher memory usage. For a dataset of this size the tradeoff is trivially in HNSW's favor.
+IVFFlat requires a minimum number of rows before you can create the index, which is annoying during development when you're re-seeding constantly. HNSW works on empty tables and has better recall at the cost of slightly higher memory usage. For a dataset of this size the tradeoff is in HNSW's favor.
 
 ---
 
 ## Tech Stack
 
 | Layer | Technology | Why |
-|-------|-----------|-----|
+|-------|------------|-----|
 | Frontend | Next.js 16, React, TypeScript | App Router, strong typing, fast iteration |
 | Styling | Tailwind CSS | Utility-first, no context switching |
 | Backend | FastAPI (Python) | Async-native, automatic OpenAPI docs, familiar in ML contexts |
