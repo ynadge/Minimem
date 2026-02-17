@@ -2,9 +2,9 @@
 
 > *What happens when a company loses itself?*
 
-A demo exploring organizational memory — built to show how AI can prevent the misalignment that quietly kills startups as they scale.
+A demo exploring organizational memory that is built to show how AI can prevent the misalignment that quietly kills startups as they scale.
 
-**[→ Try the live demo](https://minimem-flame.vercel.app)**
+**[Try the live demo](https://minimem-flame.vercel.app)**
 
 ---
 
@@ -12,7 +12,7 @@ A demo exploring organizational memory — built to show how AI can prevent the 
 
 Growing startups make dozens of decisions every week. Strategic pivots, priority calls, things that are explicitly off the table. Those decisions live in meeting notes, Slack threads, and the heads of whoever was in the room.
 
-Two weeks later, an engineer who missed the all-hands is suggesting exactly the work leadership decided to pause. Not out of malice — out of information decay. The company is misaligned with itself.
+Two weeks later, an engineer who missed the all-hands is suggesting exactly the work leadership decided to pause. The company is misaligned with itself.
 
 This is what Sentra is building against. MiniMem is my attempt to prototype one slice of that problem: **what if an AI teammate could catch misalignment the moment it enters a conversation?**
 
@@ -20,13 +20,13 @@ This is what Sentra is building against. MiniMem is my attempt to prototype one 
 
 ## The Demo
 
-MiniMem puts you inside a Slack-like group chat at **PreCrime.ai** — a (fictional, satirical) startup building an AI camera app that classifies strangers as GOOD 🟢 or BAD 🔴 using computer vision and vibes. They recently pivoted hard to enterprise B2B. Their engineer Alex did not get the memo.
+MiniMem puts you inside a "Slack" group chat at **PreCrimeAI**, which is a (fictional, satirical) startup building an AI camera app that classifies strangers as GOOD or BAD using computer vision and vibes. They recently pivoted hard to enterprise B2B. Their engineer Alex did not get the memo.
 
 **The game:**
 1. Alex opens the conversation and asks what you should work on
 2. The pinned meeting notes show you exactly what leadership decided
-3. Try suggesting something off-agenda — watch MiniMem catch it in real time
-4. Course-correct — watch MiniMem confirm you're aligned
+3. Try suggesting something off-agenda AND watch MiniMem catch it in real time
+4. Course-correct: Watch MiniMem confirm you're aligned
 
 The point isn't the game. The point is experiencing what organizational memory actually *feels* like when it works.
 
@@ -36,18 +36,18 @@ The point isn't the game. The point is experiencing what organizational memory a
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Next.js Frontend                      │
-│         Slack-like UI · TypeScript · Tailwind            │
+│                    Next.js Frontend                     │
+│         Slack-like UI · TypeScript · Tailwind           │
 └────────────────────────┬────────────────────────────────┘
                          │ HTTP (parallel requests)
           ┌──────────────┴──────────────┐
           ▼                             ▼
 ┌─────────────────┐          ┌──────────────────────┐
-│   /api/chat     │          │    /api/analyze       │
-│                 │          │                       │
-│  Alex (teammate │          │  MiniMem (guardian    │
-│  AI) responds   │          │  AI) checks alignment │
-└────────┬────────┘          └──────────┬────────────┘
+│   /api/chat     │          │    /api/analyze      │
+│                 │          │                      │
+│  Alex (teammate │          │  MiniMem (guardian   │
+│  AI) responds   │          │  AI) checks alignment│
+└────────┬────────┘          └──────────┬───────────┘
          │                              │
          │              ┌───────────────┘
          │              ▼
@@ -62,23 +62,23 @@ The point isn't the game. The point is experiencing what organizational memory a
          └───────────────┼──────────────┐
                          ▼              ▼
               ┌─────────────────────────────────┐
-              │    PostgreSQL + pgvector         │
-              │                                  │
-              │  meetings  (transcript, embedding)│
-              │  decisions (content, embedding)   │
-              │  participants                     │
+              │    PostgreSQL + pgvector        │
+              │                                 │
+              │  meetings (transcript,embedding)│
+              │  decisions (content, embedding) │
+              │  participants                   │
               └─────────────────────────────────┘
 ```
 
-### Two AI instances, one purpose
+### Two AI instances
 
-The most interesting architectural decision: two separate LLM calls fire in parallel on every user message.
+The most interesting architectural decision was that two separate LLM calls fire in parallel on every user message.
 
-**Alex (the teammate)** runs with a system prompt that makes him enthusiastic but context-blind. He doesn't know about recent decisions. He'll happily agree to build the consumer leaderboard, work on the mobile app, or anything else that's been explicitly frozen. Temperature 0.8 — he has personality.
+**Alex (the teammate)** runs with a system prompt that makes him enthusiastic but context-blind. He doesn't know about recent decisions. He'll happily agree to build the consumer leaderboard, work on the mobile app, or anything else that's been explicitly frozen. 
 
-**MiniMem (the guardian)** never sees Alex's response. It independently analyzes the conversation against the decision database using vector similarity search. Temperature 0 — it needs to be deterministic.
+**MiniMem (the guardian)** never sees Alex's response. It independently analyzes the conversation against the decision database using vector similarity search.
 
-The two AIs are completely unaware of each other. MiniMem isn't reacting to Alex — it's reacting to the conversation's *direction*. This is the right design: in production, you'd want the memory layer to be orthogonal to the communication layer.
+The two AIs are completely unaware of each other. MiniMem is reacting to the conversation's *direction*. This is the right design: in production, you'd want the memory layer to be orthogonal to the communication layer.
 
 ### RAG implementation
 
@@ -90,18 +90,18 @@ On each message, MiniMem:
 3. If the best match exceeds a 0.75 similarity threshold, passes the conversation + top matches to `gpt-4o-mini` for alignment judgment
 4. Returns structured JSON: `{ aligned, issue, relevant_decision, meeting_title, severity }`
 
-The 0.75 threshold is doing real work here. Below it, there's not enough semantic overlap to make a confident claim — better to stay quiet than false-positive. In the test data, genuine misalignments score 0.80+.
+The 0.75 threshold is doing real work here. Below it, there's not enough semantic overlap to make a confident claim and its better to stay quiet than act on a false-positive. In the test data, genuine misalignments score 0.80+.
 
 ### Why HNSW over IVFFlat
 
-IVFFlat requires a minimum number of rows before you can create the index — annoying during development when you're re-seeding constantly. HNSW works on empty tables and has better recall at the cost of slightly higher memory usage. For a dataset of this size the tradeoff is trivially in HNSW's favor.
+IVFFlat requires a minimum number of rows before you can create the index, which is annoying during development when you're re-seeding constantly. HNSW works on empty tables and has better recall at the cost of slightly higher memory usage. For a dataset of this size the tradeoff is in HNSW's favor.
 
 ---
 
 ## Tech Stack
 
 | Layer | Technology | Why |
-|-------|-----------|-----|
+|-------|------------|-----|
 | Frontend | Next.js 16, React, TypeScript | App Router, strong typing, fast iteration |
 | Styling | Tailwind CSS | Utility-first, no context switching |
 | Backend | FastAPI (Python) | Async-native, automatic OpenAPI docs, familiar in ML contexts |
@@ -177,26 +177,26 @@ minimem/
 
 This demo deliberately scopes down to one core interaction. In a production system:
 
-**Broader ingestion** — real Slack threads, Notion docs, email chains, Jira tickets. The pipeline is the same (chunk → embed → store) but the surface area of organizational memory is much larger.
+**Broader ingestion**: Real Slack threads, Notion docs, email chains, Jira tickets. The pipeline is the same but the surface area of organizational memory is much larger.
 
-**Smarter chunking** — right now entire meeting transcripts are embedded as single vectors. In practice you'd chunk by speaker turn or topic, embed each chunk separately, and retrieve at chunk granularity. Better recall, more precise citations.
+**Smarter chunking**: Right now entire meeting transcripts are embedded as single vectors. In practice you'd chunk by speaker turn or topic, embed each chunk separately, and retrieve at chunk granularity for better recal and precise citations.
 
-**Longitudinal context** — decisions decay and get superseded. The system should understand that a January decision can be overridden by a March decision, and weight recency accordingly. Right now it just finds the most semantically similar decision, not the most *current* one.
+**Longitudinal context**: Decisions decay and get superseded. The system should understand that a January decision can be overridden by a March decision, and weight recency accordingly. Right now it just finds the most semantically similar decision, not the most *current* one.
 
-**Multi-tenant isolation** — the schema is ready for it (adding `org_id` foreign keys), but the API layer doesn't enforce it yet. Real product needs row-level security.
+**Multi-tenant isolation**: The schema is ready for it (adding `org_id` foreign keys), but the API layer doesn't enforce it yet. Real product needs row-level security.
 
-**Proactive surfacing** — right now MiniMem only fires reactively (when someone says something wrong). The more interesting product moment is proactive: "Based on last week's all-hands, here's context you might want before this meeting."
+**Proactive surfacing**: Right now MiniMem only fires reactively (when someone says something wrong). The more interesting product moment is proactive: "Based on last week's all-hands, here's context you might want before this meeting."
 
 ---
 
 ## Why I Built This
 
-I came across Sentra after your funding announcement and the problem immediately resonated. I've watched fast-growing teams lose their own context — decisions made in week 3 that contradict decisions from week 1, engineers building things leadership explicitly paused, new hires operating on stale mental models of what the company is doing.
+I came across Sentra after your seed funding announcement. I love staying in the loop when it comes to latest startups, especially from big accelerators like a16z. This led me down a rabbit hole where I really wanted to understand this intriguing concept of an organizational brain. I have felt the slipping of context or misalignment creep into the four person team I currently am on, so it feels only natural that something like Sentra would have very significant and measurable returns in larger teams, and would become irreplaceable once embeded in everyday communication. The manifesto on the Sentra site makes complete sense when it says that the "moat deepens with time".
 
-MiniMem is my attempt to make that problem tangible and interactive. It's also an honest signal of what I'd bring to the role: I can scope a problem, design a system, and ship something end-to-end that demonstrates the core value prop.
+Sentra wants people who take initiative, work indepently, and can move fast. So, I not only saw MiniMem as a signal that I can bring all the technical requirements for the new grad SWE role, but that I also have the interest in simplifying complex workflows and data into interfaces that feel intuitive.
 
 I'd love to talk about what you're building.
 
 ---
 
-*Built by [Your Name] · [your@email.com] · [linkedin.com/in/yourprofile]*
+*Built by Yash Nadge · yash.nadge@gmail.com · [Linkedin](https://www.linkedin.com/in/yash-nadge/)*
