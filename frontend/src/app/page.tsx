@@ -10,19 +10,65 @@ import { MeetingNotesPanel } from '@/components/MeetingNotesPanel'
 import { GamePrompt } from '@/components/GamePrompt'
 import { Message, GameStage } from '@/types'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API_TIMEOUT_MS = 15_000
+
 const ALEX_OPENER: Omit<Message, 'id' | 'timestamp'> = {
   sender: 'alex',
   content: "Hey! Sprint planning time 🎉 I've been thinking about what we should focus on next — what do you think our top priority should be?",
+}
+
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal })
+    clearTimeout(timeoutId)
+    return res
+  } catch (err) {
+    clearTimeout(timeoutId)
+    throw err
+  }
+}
+
+function MiniMemAnalyzing() {
+  return (
+    <div className="flex gap-3 px-4 py-1 message-enter">
+      <div className="w-9 h-9 rounded-lg flex-shrink-0 flex items-center justify-center text-xl">
+        🧠
+      </div>
+      <div className="flex-1">
+        <div className="flex items-baseline gap-2 mb-1.5">
+          <span className="font-bold text-sm text-amber-600">MiniMem</span>
+          <span className="text-[9px] bg-amber-100 text-amber-700 border border-amber-300 px-1 rounded font-bold uppercase tracking-wide">
+            BOT
+          </span>
+          <span className="text-[11px] text-[#616061]">is scanning context...</span>
+        </div>
+        <div className="flex gap-1">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="w-2 h-2 rounded-full bg-amber-400"
+              style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isAlexTyping, setIsAlexTyping] = useState(false)
+  const [isMinimemAnalyzing, setIsMinimemAnalyzing] = useState(false)
   const [gameStage, setGameStage] = useState<GameStage>('idle')
   const [newMessageIds, setNewMessageIds] = useState<Set<string>>(new Set())
   const [isSending, setIsSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Alex "arrives" and opens the conversation after 1.5s
   useEffect(() => {
@@ -35,7 +81,15 @@ export default function Home() {
   // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isAlexTyping])
+  }, [messages, isAlexTyping, isMinimemAnalyzing])
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+    textarea.style.height = 'auto'
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`
+  }, [input])
 
   function addMessage(msg: Message) {
     setMessages((prev) => [...prev, msg])
@@ -69,17 +123,29 @@ export default function Home() {
     try {
       // Fire both in parallel — they are independent operations
       const [chatRes, analyzeRes] = await Promise.all([
-        fetch('http://localhost:8000/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: content, history }),
-        }),
-        fetch('http://localhost:8000/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: content, history }),
-        }),
+        fetchWithTimeout(
+          `${API_BASE}/api/chat`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: content, history }),
+          },
+          API_TIMEOUT_MS
+        ),
+        fetchWithTimeout(
+          `${API_BASE}/api/analyze`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: content, history }),
+          },
+          API_TIMEOUT_MS
+        ),
       ])
+
+      if (!chatRes.ok || !analyzeRes.ok) {
+        throw new Error(`API error: chat=${chatRes.status} analyze=${analyzeRes.status}`)
+      }
 
       const [chatData, alignmentData] = await Promise.all([chatRes.json(), analyzeRes.json()])
 
@@ -94,8 +160,12 @@ export default function Home() {
           timestamp: new Date(),
         })
 
+        setIsMinimemAnalyzing(true)
+
         // MiniMem posts 900ms after Alex — gives the user time to read Alex's reply first
         setTimeout(() => {
+          setIsMinimemAnalyzing(false)
+
           if (!alignmentData.aligned) {
             // Misalignment detected
             addMessage({
@@ -131,9 +201,22 @@ export default function Home() {
       }, 1400)
 
     } catch (err) {
+      // Recover gracefully — never leave the user stuck
       console.error('API error:', err)
       setIsAlexTyping(false)
+      setIsMinimemAnalyzing(false)
       setIsSending(false)
+
+      const isTimeout = err instanceof Error && err.name === 'AbortError'
+
+      addMessage({
+        id: `error-${Date.now()}`,
+        sender: 'alex',
+        content: isTimeout
+          ? "Hmm, I'm taking a while to respond — give me a sec and try again?"
+          : "Sorry, I'm having connection issues. Try again in a moment!",
+        timestamp: new Date(),
+      })
     }
   }
 
@@ -197,6 +280,7 @@ export default function Home() {
                 ))}
 
                 {isAlexTyping && <TypingIndicator name="Alex Chen" />}
+                {isMinimemAnalyzing && <MiniMemAnalyzing />}
 
                 <div ref={messagesEndRef} />
               </div>
@@ -212,14 +296,15 @@ export default function Home() {
                   </div>
                   <div className="flex items-end gap-2 px-3 py-2">
                     <textarea
+                      ref={textareaRef}
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Message #sprint-planning"
-                      className="flex-1 resize-none outline-none text-sm text-[#1d1c1d] placeholder-[#a0a0a0] min-h-[20px] max-h-[100px]"
+                      className="flex-1 resize-none outline-none text-sm text-[#1d1c1d] placeholder-[#a0a0a0] max-h-[120px] overflow-y-auto"
                       rows={1}
                       disabled={isSending}
-                      style={{ fontFamily: "'Lato', sans-serif" }}
+                      style={{ fontFamily: "'Lato', sans-serif", height: 'auto' }}
                     />
                     <button
                       onClick={handleSend}

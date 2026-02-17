@@ -4,16 +4,17 @@ import { useState } from 'react'
 import { ChevronDown, ChevronUp, FileText } from 'lucide-react'
 
 const AGENDA_NOTES = {
-  meeting: 'Q1 All-Hands: Strategic Pivot',
+  meeting: 'Q1 All-Hands: The Pivot to B2B',
   date: 'January 15, 2025',
   decisions: [
-    'Pause ALL consumer features in Q1 — no exceptions',
-    'Redirect 100% of engineering to enterprise features',
-    'Target: 5 signed enterprise customers by March 31st',
-    'Top priorities: SSO integration, enterprise dashboard, admin controls',
-    'Mobile app redesign is explicitly on hold',
+    'Pivot entirely to B2B enterprise — consumer app is frozen',
+    'GoodBad Score app gets zero engineering resources this quarter',
+    'Top priorities: enterprise SDK, API dashboard, SSO integration',
+    'Target: 3 signed enterprise pilots by March 31st',
+    'TrustGuard Security is the lead prospect — close them first',
+    'No consumer features without explicit CEO sign-off',
   ],
-  attendees: 'Sarah Chen (CEO), Mike Rodriguez (CTO), Alex Chen (Senior Eng), All Team Leads',
+  attendees: 'Sarah Fisher (CEO), Mike Rodriguez (CTO), Alex Chen (Senior Eng), Priya Nair (Head of Product), Jordan Lee (Sales)',
 }
 
 export function MeetingNotesPanel() {

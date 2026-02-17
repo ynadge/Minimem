@@ -22,80 +22,192 @@ client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 MEETINGS = [
     {
-        "title": "Q1 All-Hands: Strategic Pivot",
+        "title": "Q1 All-Hands: The Pivot to B2B",
         "date": "2025-01-15",
         "transcript": (
-            "Sarah (CEO): Team, we're making a major strategic shift. After analyzing "
-            "our metrics and talking to investors, we're pausing all consumer features "
-            "in Q1 to focus entirely on enterprise expansion. This is critical for our "
-            "runway.\n\n"
-            "Mike (CTO): Specifically, this means the mobile app redesign is on hold. "
-            "We need all engineering effort redirected to enterprise dashboard, SSO "
-            "integration, and admin controls.\n\n"
-            "Sarah: Our goal is to sign 5 enterprise customers by end of March. "
-            "Everything else is secondary. I know this is a big change, but it's the "
-            "right move for the company.\n\n"
-            "Alex (Senior Eng): Makes sense. I'll shift my focus to the enterprise "
-            "features.\n\n"
-            "Mike: Thank you everyone. Let's make Q1 count."
+            'Sarah Fisher (CEO): Okay team, big news. We\'ve been burning runway on the '
+            'consumer app and frankly the App Store keeps pulling us for "privacy concerns" '
+            "— which, for the record, is totally overblown. Anyway. We're pivoting. B2B "
+            "only in Q1. Enterprise security firms, insurance companies, private gated "
+            "communities. That's our customer now.\n\n"
+            "Mike Rodriguez (CTO): This means we are pausing the consumer-facing GoodBad "
+            "Score app entirely. No new features, no bug fixes, no nothing. All engineering "
+            "goes to the enterprise SDK and the API dashboard.\n\n"
+            "Sarah Fisher: Our goal is three signed enterprise pilots by end of March. "
+            "Three. That's it. One of them is basically done — TrustGuard Security is very "
+            "interested. But we need the enterprise dashboard live and we need SSO because "
+            "their IT guy won't shut up about it.\n\n"
+            "Alex Chen (Senior Eng): What about the explainability feature? Legal said we "
+            "might need it.\n\n"
+            "Sarah Fisher: Legal says a lot of things. That goes on the backlog. Focus on "
+            "the dashboard and SSO. If we don't close these pilots we don't make it to "
+            "Q2.\n\n"
+            "Mike Rodriguez: To be crystal clear: no consumer features. The GoodBad Score "
+            "app is frozen. Anyone working on it without explicit sign-off is wasting time "
+            "we don't have."
         ),
         "decisions": [
-            "Pause all consumer features in Q1 to focus on enterprise",
-            "Mobile app redesign is on hold indefinitely",
-            "Target: Sign 5 enterprise customers by March 31st",
-            "All engineering resources redirected to enterprise features",
-            "Top priorities: SSO integration, enterprise dashboard, admin controls",
+            "Pivot entirely to B2B enterprise in Q1 — consumer app is frozen",
+            "GoodBad Score consumer app gets zero engineering resources this quarter",
+            "Top priorities: enterprise SDK, API dashboard, SSO integration",
+            "Target: 3 signed enterprise pilots by March 31st",
+            "TrustGuard Security is the lead prospect — close them first",
+            "Explainability feature goes to backlog — not a Q1 priority",
+            "No consumer features without explicit CEO sign-off",
         ],
         "participants": [
-            {"name": "Sarah Chen", "role": "CEO"},
+            {"name": "Sarah Fisher", "role": "CEO"},
             {"name": "Mike Rodriguez", "role": "CTO"},
             {"name": "Alex Chen", "role": "Senior Engineer"},
+            {"name": "Priya Nair", "role": "Head of Product"},
+            {"name": "Jordan Lee", "role": "Sales Lead"},
         ],
     },
     {
-        "title": "Engineering Standup - Feb Sprint Planning",
-        "date": "2025-02-14",
-        "transcript": (
-            "Mike (CTO): Quick updates on enterprise track. We have two major deals "
-            "waiting on SSO integration. This is our highest priority blocker.\n\n"
-            "Alex: I can pick that up. Should take about a week with testing.\n\n"
-            "Mike: Perfect. Also, enterprise customers are reporting the dashboard is "
-            "slow with large datasets. We need performance optimization.\n\n"
-            "Alex: I'll add that to the backlog after SSO.\n\n"
-            "Mike: Good. And reminder - no consumer feature work this quarter per the "
-            "all-hands decision."
-        ),
-        "decisions": [
-            "SSO integration is top priority - blocking two enterprise deals",
-            "Dashboard performance optimization needed for large datasets",
-            "Alex to lead SSO implementation (1 week estimate)",
-            "No consumer features this quarter - strict enforcement",
-        ],
-        "participants": [
-            {"name": "Mike Rodriguez", "role": "CTO"},
-            {"name": "Alex Chen", "role": "Senior Engineer"},
-        ],
-    },
-    {
-        "title": "Product Team Sync - Customer Feedback",
+        "title": "Engineering Standup — Sprint Planning",
         "date": "2025-02-10",
         "transcript": (
-            "Sarah (CEO): I wanted to share feedback from enterprise prospects. They "
-            "love the core product but need better admin controls and audit logging.\n\n"
-            "Mike: We can prioritize admin panel improvements. The audit logging will "
-            "take a bit more time.\n\n"
-            "Sarah: That's fine. Also, a few asked about our mobile app. I told them "
-            "it's not in our roadmap right now given our enterprise focus.\n\n"
-            "Mike: Correct. Mobile is on hold per our Q1 strategy."
+            "Mike Rodriguez (CTO): Alright. SSO is the number one blocker. TrustGuard's "
+            "IT team will not proceed without it. Alex, how long?\n\n"
+            "Alex Chen: A week if nothing blows up. Maybe less. The enterprise dashboard "
+            "is mostly done, I just need to wire up the org-level admin controls.\n\n"
+            "Mike Rodriguez: Good. Do SSO first, then admin controls. In that order. Do "
+            "not get distracted by anything else.\n\n"
+            "Alex Chen: What about the accuracy drift we're seeing on the BAD detection "
+            "model? It's been flagging more false positives this week.\n\n"
+            "Mike Rodriguez: Known issue. Data science is looking at it. That is not your "
+            "problem this sprint. Your problem is SSO and admin controls. That's it.\n\n"
+            "Alex Chen: Understood.\n\n"
+            "Mike Rodriguez: Also — and I shouldn't have to say this — the GoodBad Score "
+            "app is frozen. I saw a PR open for a new onboarding flow. Close it. We are "
+            "not doing consumer onboarding flows in Q1."
         ),
         "decisions": [
-            "Prioritize admin panel improvements for enterprise customers",
-            "Audit logging feature needed - medium priority",
-            "Mobile app explicitly not in roadmap due to enterprise focus",
+            "SSO integration is the single highest priority — blocks TrustGuard deal",
+            "Enterprise admin controls come after SSO, not before",
+            "Model accuracy drift is a data science issue — not engineering's concern this sprint",
+            "Consumer app PRs should be closed immediately — GoodBad Score app is frozen",
+            "Sprint order is strictly: SSO → admin controls → nothing else",
         ],
         "participants": [
-            {"name": "Sarah Chen", "role": "CEO"},
             {"name": "Mike Rodriguez", "role": "CTO"},
+            {"name": "Alex Chen", "role": "Senior Engineer"},
+        ],
+    },
+    {
+        "title": "Product Sync — TrustGuard Feedback",
+        "date": "2025-02-12",
+        "transcript": (
+            "Priya Nair (Head of Product): So I got off a call with TrustGuard. Good news "
+            'and annoying news. Good news: they love the core detection product. Their '
+            'words were "genuinely unsettling how accurate it is," which I\'m choosing to '
+            "interpret as a compliment.\n\n"
+            "Sarah Fisher (CEO): It is a compliment. What's the annoying news?\n\n"
+            "Priya Nair: They want audit logs. Every classification event needs a timestamp, "
+            "location, confidence score, and operator ID. For compliance reasons apparently.\n\n"
+            "Sarah Fisher: How hard is that?\n\n"
+            "Mike Rodriguez (CTO): Not hard. A week of work, maybe less. It's mostly a "
+            "logging pipeline.\n\n"
+            "Sarah Fisher: Okay add it to the sprint. But SSO still comes first. The audit "
+            "logs are a pilot requirement but TrustGuard said they can start the pilot "
+            "without them as long as SSO is done.\n\n"
+            "Priya Nair: One more thing — they asked if we'd ever consider a mobile app "
+            "for their field agents. Like a handheld version.\n\n"
+            "Sarah Fisher: Tell them it's on the roadmap. Don't tell them when. We are not "
+            "building a consumer-facing anything until Q2 at the earliest. Mobile is not "
+            "happening in Q1.\n\n"
+            "Mike Rodriguez: Agreed. No mobile, no consumer surface, nothing that isn't "
+            "the enterprise dashboard."
+        ),
+        "decisions": [
+            "Audit logging pipeline added to sprint — lower priority than SSO",
+            "TrustGuard can begin pilot once SSO is complete — audit logs can follow",
+            "Mobile app for field agents is NOT happening in Q1",
+            "Any mobile or consumer-facing feature requests get pushed to Q2 roadmap",
+            "SSO remains the critical path item — nothing changes that",
+        ],
+        "participants": [
+            {"name": "Sarah Fisher", "role": "CEO"},
+            {"name": "Mike Rodriguez", "role": "CTO"},
+            {"name": "Priya Nair", "role": "Head of Product"},
+        ],
+    },
+    {
+        "title": "Investor Update Prep — a16z Check-in",
+        "date": "2025-02-14",
+        "transcript": (
+            "Sarah Fisher (CEO): Okay so the a16z check-in is in two weeks. Here's what "
+            "the narrative is: we pivoted fast, we have a hot enterprise prospect, and we "
+            "are laser focused. I cannot walk into that meeting and tell them we split "
+            "engineering between consumer and enterprise. That is a death sentence.\n\n"
+            "Jordan Lee (Sales): TrustGuard is close. If I had to bet I'd say we get the "
+            "LOI by end of February.\n\n"
+            "Sarah Fisher: That's the story. One focused bet, enterprise only, one serious "
+            "prospect about to sign. Mike, is there anything in the codebase that looks "
+            "like we've been doing consumer work?\n\n"
+            "Mike Rodriguez (CTO): There was a PR. I closed it. We're clean.\n\n"
+            "Sarah Fisher: Good. The company narrative for a16z is: PreCrime.ai is the "
+            "enterprise infrastructure play for physical security teams. We are not a "
+            "consumer app. We are not a social credit score. We are a B2B API. Say it "
+            "back to me.\n\n"
+            "Jordan Lee: B2B API for enterprise physical security teams.\n\n"
+            "Sarah Fisher: Perfect. Alex, I need the enterprise dashboard looking polished "
+            "for a screen share demo. That is priority one after SSO.\n\n"
+            "Alex Chen (Senior Eng): Got it. I can have it looking sharp in a few days.\n\n"
+            "Sarah Fisher: Great. No consumer work, nothing experimental, nothing that "
+            "isn't directly connected to closing TrustGuard or impressing a16z."
+        ),
+        "decisions": [
+            "Company narrative: B2B API for enterprise physical security — not a consumer app",
+            "All work must connect directly to closing TrustGuard or the a16z demo",
+            "Enterprise dashboard needs to be polished and demo-ready after SSO",
+            "No experimental features, no consumer work, nothing off-script before the investor meeting",
+            "Jordan Lee to close TrustGuard LOI by end of February",
+        ],
+        "participants": [
+            {"name": "Sarah Fisher", "role": "CEO"},
+            {"name": "Mike Rodriguez", "role": "CTO"},
+            {"name": "Alex Chen", "role": "Senior Engineer"},
+            {"name": "Jordan Lee", "role": "Sales Lead"},
+        ],
+    },
+    {
+        "title": "Weekly Retro — What's Slowing Us Down",
+        "date": "2025-02-15",
+        "transcript": (
+            "Mike Rodriguez (CTO): Quick retro. What's blocking people?\n\n"
+            "Alex Chen (Senior Eng): Honestly the SSO implementation is going fine. My "
+            "only concern is we keep getting Slack messages asking for small consumer "
+            "features — the GoodBad Score leaderboard, the shareable profile cards thing. "
+            "I don't know where those are coming from but it's distracting.\n\n"
+            "Priya Nair (Head of Product): That's me, sorry. I was triaging old user "
+            "requests from before the pivot. I'll stop.\n\n"
+            "Mike Rodriguez: Please. We have one job right now.\n\n"
+            "Alex Chen: Also — and I know this is not my call — but the model is "
+            "classifying bald men as BAD at a rate that seems statistically notable.\n\n"
+            "Mike Rodriguez: ...I'll flag that to data science.\n\n"
+            "Sarah Fisher (CEO): Moving on. Jordan, where are we on TrustGuard?\n\n"
+            "Jordan Lee (Sales): Demo is Tuesday. If SSO is live by Monday I think we "
+            "close.\n\n"
+            "Sarah Fisher: Alex, SSO by Monday.\n\n"
+            "Alex Chen: It'll be done Sunday.\n\n"
+            "Sarah Fisher: Good. Everything else is noise until TrustGuard signs. "
+            "Leaderboards, profile cards, shareable badges, consumer onboarding — all "
+            "of it is noise. We can revisit in Q2 if we're still alive."
+        ),
+        "decisions": [
+            "Ignore all incoming consumer feature requests until Q2 — they are noise",
+            "GoodBad Score leaderboard is not being built in Q1",
+            "Shareable profile cards feature is not being built in Q1",
+            "SSO must be live by Monday for TrustGuard demo on Tuesday",
+            "Everything that is not SSO or TrustGuard prep is deprioritized until the deal closes",
+        ],
+        "participants": [
+            {"name": "Sarah Fisher", "role": "CEO"},
+            {"name": "Mike Rodriguez", "role": "CTO"},
+            {"name": "Alex Chen", "role": "Senior Engineer"},
+            {"name": "Priya Nair", "role": "Head of Product"},
+            {"name": "Jordan Lee", "role": "Sales Lead"},
         ],
     },
 ]

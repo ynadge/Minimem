@@ -4,6 +4,7 @@ Handles vector search against meeting decisions and LLM-based alignment checking
 """
 
 import json
+import logging
 import os
 from typing import Any, Dict, List
 
@@ -12,6 +13,8 @@ from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -144,7 +147,27 @@ or if misaligned:
     )
 
     raw = response.choices[0].message.content
-    result = json.loads(raw)
+
+    try:
+        result = json.loads(raw)
+    except (json.JSONDecodeError, AttributeError, IndexError) as e:
+        logger.error("Failed to parse LLM alignment response: %s — raw: %s", e, raw)
+        return {
+            "aligned": True,
+            "issue": None,
+            "relevant_decision": None,
+            "meeting_title": None,
+            "meeting_date": relevant_context[0]["meeting_date"] if relevant_context else None,
+            "similarity": relevant_context[0]["similarity"] if relevant_context else 0.0,
+            "severity": None,
+        }
+
+    # Fill any missing keys so the frontend never gets undefined fields
+    result.setdefault("aligned", True)
+    result.setdefault("issue", None)
+    result.setdefault("relevant_decision", None)
+    result.setdefault("meeting_title", None)
+    result.setdefault("severity", None)
 
     # Attach vector search metadata
     result["meeting_date"] = relevant_context[0]["meeting_date"]

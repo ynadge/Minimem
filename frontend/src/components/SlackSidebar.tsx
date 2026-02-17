@@ -9,8 +9,9 @@ const CHANNELS = [
 
 const DMS = [
   { name: 'Alex Chen', online: true, initials: 'AC' },
-  { name: 'Sarah Chen', online: true, initials: 'SC' },
+  { name: 'Sarah Fisher', online: true, initials: 'SF' },
   { name: 'Mike Rodriguez', online: false, initials: 'MR' },
+  { name: 'Priya Nair', online: true, initials: 'PN' },
 ]
 
 export function SlackSidebar() {
@@ -19,7 +20,7 @@ export function SlackSidebar() {
       {/* Workspace header */}
       <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
         <div>
-          <div className="font-black text-white text-sm tracking-tight">GrowthCo</div>
+          <div className="font-black text-white text-sm tracking-tight">PreCrimeAI</div>
           <div className="flex items-center gap-1 mt-0.5">
             <Circle className="w-2 h-2 fill-green-400 text-green-400" />
             <span className="text-[10px] text-[#d1d2d3]">You</span>
