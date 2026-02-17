@@ -9,12 +9,14 @@ body {
     radial-gradient(ellipse at 20% 50%, rgba(97, 31, 105, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, rgba(74, 21, 75, 0.1) 0%, transparent 50%);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Lato', sans-serif;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 6px; }

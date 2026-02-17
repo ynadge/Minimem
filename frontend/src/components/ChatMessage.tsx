@@ -23,14 +23,14 @@ export function ChatMessage({ message, isNew = false }: ChatMessageProps) {
 
   return (
     <div className={cn(
-      'flex gap-3 px-4 py-1 hover:bg-black/[0.03] group',
+      'flex gap-2 md:gap-3 px-3 md:px-4 py-1 hover:bg-black/[0.03] group',
       isNew && (isMinimem
         ? `minimem-enter ${message.alertType === 'warning' ? 'minimem-pulse' : 'success-pulse'}`
         : 'message-enter')
     )}>
       {/* Avatar */}
       <div
-        className="w-9 h-9 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5"
+        className="w-8 h-8 md:w-9 md:h-9 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5"
         style={{ background: avatar.bg }}
       >
         {isMinimem

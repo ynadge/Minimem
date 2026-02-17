@@ -18,14 +18,14 @@ const AGENDA_NOTES = {
 }
 
 export function MeetingNotesPanel() {
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
 
   return (
     <div className="mx-4 mb-3 rounded-lg border border-[#e8e8e8] overflow-hidden text-[#1d1c1d]">
       {/* Header — always visible */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center gap-2 px-3 py-2 bg-[#f8f8f8] hover:bg-[#f0f0f0] transition-colors text-left"
+        className="w-full flex items-center gap-2 px-3 py-3 md:py-2 bg-[#f8f8f8] hover:bg-[#f0f0f0] transition-colors text-left"
       >
         <FileText className="w-3.5 h-3.5 text-[#616061] flex-shrink-0" />
         <span className="text-[12px] font-bold text-[#1d1c1d] flex-1">📌 Pinned: {AGENDA_NOTES.meeting}</span>

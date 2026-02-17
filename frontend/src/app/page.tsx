@@ -33,8 +33,8 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 
 function MiniMemAnalyzing() {
   return (
-    <div className="flex gap-3 px-4 py-1 message-enter">
-      <div className="w-9 h-9 rounded-lg flex-shrink-0 flex items-center justify-center text-xl">
+    <div className="flex gap-2 md:gap-3 px-3 md:px-4 py-1 message-enter">
+      <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg flex-shrink-0 flex items-center justify-center text-xl">
         🧠
       </div>
       <div className="flex-1">
@@ -229,7 +229,7 @@ export default function Home() {
 
   return (
     <main
-      className="h-screen w-screen overflow-hidden flex items-center justify-center p-4"
+      className="h-screen w-screen overflow-hidden flex items-center justify-center p-0 md:p-4"
       style={{
         background: '#1a1a2e',
         backgroundImage: `

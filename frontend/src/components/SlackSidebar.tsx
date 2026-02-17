@@ -16,7 +16,7 @@ const DMS = [
 
 export function SlackSidebar() {
   return (
-    <div className="flex flex-col h-full text-[#d1d2d3] select-none flex-shrink-0" style={{ background: '#3F0E40', width: '200px' }}>
+    <div className="hidden md:flex flex-col h-full text-[#d1d2d3] select-none flex-shrink-0" style={{ background: '#3F0E40', width: '200px' }}>
       {/* Workspace header */}
       <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
         <div>
